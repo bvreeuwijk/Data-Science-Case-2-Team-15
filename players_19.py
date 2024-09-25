@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Laad de data
-df = pd.read_csv('/Users/bramvanreeuwijk/Downloads/players_19.csv')
+df = pd.read_csv(r"C:\Users\goedh\Downloads\players_19.csv")
 
 # Categorieën voor posities
 aanval_posities = ['ST', 'CF', 'LW', 'RW', 'LF', 'RF']
