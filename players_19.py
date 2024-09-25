@@ -1,14 +1,14 @@
 import streamlit as st
 import pandas as pd
 
-uploaded_file = st.file_uploader(r"C:\Users\goedh\Downloads\players_19.csv", type="csv")
+uploaded_file = st.file_uploader("C:\Users\goedh\Downloads\players_19.csv", type="csv")
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.write(df.head())
 
 # Laad de data
-df = pd.read_csv(r"C:\Users\goedh\Downloads\players_19.csv")
+df = pd.read_csv("C:\Users\goedh\Downloads\players_19.csv")
 
 # Categorieën voor posities
 aanval_posities = ['ST', 'CF', 'LW', 'RW', 'LF', 'RF']
