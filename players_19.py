@@ -8,7 +8,7 @@ if uploaded_file is not None:
     st.write(df.head())
 
 # Laad de data
-df = pd.read_csv("C:\Users\goedh\Downloads\players_19.csv")
+df = pd.read_csv(r"C:\Users\goedh\Downloads\players_19.csv")
 
 # Categorieën voor posities
 aanval_posities = ['ST', 'CF', 'LW', 'RW', 'LF', 'RF']
