@@ -3,6 +3,12 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import zipfile
+import subprocess
+
+# Download of laad datasets
+# Kaggle API - optioneel als de datasets nog niet zijn gedownload
+command = "kaggle datasets download -d stefanoleone992/ea-sports-fc-24-complete-player-dataset"
+result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
 # Laad FIFA 19 dataset
 df_2019 = pd.read_csv('players_19.csv')
@@ -38,6 +44,31 @@ overall = st.slider('Selecteer een minimale algemene beoordeling (Overall)', min
 
 # Filter de dataset op basis van de geselecteerde overall rating
 filtered_df = df[df['overall'] >= overall]
+# Categorieën voor posities
+aanval_posities = ['ST', 'CF', 'LW', 'RW', 'LF', 'RF']
+middenveld_posities = ['CAM', 'CM', 'LM', 'RM', 'CDM', 'LAM', 'RAM', 'LCM', 'RCM']
+verdediging_posities = ['CB', 'LB', 'RB', 'LWB', 'RWB', 'LCB', 'RCB', 'LDM', 'RDM']
+keeper_posities = ['GK']
+
+# Voeg de optie voor alle posities toe
+positie_categorieen = ['Alle posities', 'Aanval', 'Middenveld', 'Verdediging', 'Keeper']
+
+# Dropdown-menu voor positie categorie
+positie_categorie = st.selectbox('Kies een categorie', options=positie_categorieen)
+
+# Filter de data op basis van de geselecteerde categorie
+if positie_categorie == 'Aanval':
+    filtered_df = filtered_df[filtered_df['player_positions'].apply(lambda x: any(pos in x for pos in aanval_posities))]
+elif positie_categorie == 'Middenveld':
+    filtered_df = filtered_df[filtered_df['player_positions'].apply(lambda x: any(pos in x for pos in middenveld_posities))]
+elif positie_categorie == 'Verdediging':
+    filtered_df = filtered_df[filtered_df['player_positions'].apply(lambda x: any(pos in x for pos in verdediging_posities))]
+elif positie_categorie == 'Keeper':
+    filtered_df = filtered_df[filtered_df['player_positions'].isin(keeper_posities)]
+else:
+    filtered_df = filtered_df  # Voor 'Alle posities', gebruik de volledige dataset
+
+
 
 # Dropdown-menu voor clubs
 club = st.selectbox('Selecteer een club om spelers te zien', options=['Alle clubs'] + list(df['club'].unique()))
@@ -65,6 +96,7 @@ filtered_df['waarde_per_leeftijd'] = (filtered_df['value_eur'] / filtered_df['ag
 filtered_df['waarde_per_rating'] = (filtered_df['value_eur'] / filtered_df['overall']).round(0)
 
 
+
 # Lijst met gefilterde spelers weergeven
 st.dataframe(filtered_df[['short_name', 'club', 'overall', 'potential', 'age', 'value_eur','waarde_per_leeftijd','waarde_per_rating']])
 
@@ -90,29 +122,7 @@ fig.update_layout(
 # Plot de figuur in Streamlit
 st.plotly_chart(fig)
 
-# Categorieën voor posities
-aanval_posities = ['ST', 'CF', 'LW', 'RW', 'LF', 'RF']
-middenveld_posities = ['CAM', 'CM', 'LM', 'RM', 'CDM', 'LAM', 'RAM', 'LCM', 'RCM']
-verdediging_posities = ['CB', 'LB', 'RB', 'LWB', 'RWB', 'LCB', 'RCB', 'LDM', 'RDM']
-keeper_posities = ['GK']
 
-# Voeg de optie voor alle posities toe
-positie_categorieen = ['Alle posities', 'Aanval', 'Middenveld', 'Verdediging', 'Keeper']
-
-# Dropdown-menu voor positie categorie
-positie_categorie = st.selectbox('Kies een categorie', options=positie_categorieen)
-
-# Filter de data op basis van de geselecteerde categorie
-if positie_categorie == 'Aanval':
-    filtered_df = filtered_df[filtered_df['player_positions'].apply(lambda x: any(pos in x for pos in aanval_posities))]
-elif positie_categorie == 'Middenveld':
-    filtered_df = filtered_df[filtered_df['player_positions'].apply(lambda x: any(pos in x for pos in middenveld_posities))]
-elif positie_categorie == 'Verdediging':
-    filtered_df = filtered_df[filtered_df['player_positions'].apply(lambda x: any(pos in x for pos in verdediging_posities))]
-elif positie_categorie == 'Keeper':
-    filtered_df = filtered_df[filtered_df['player_positions'].isin(keeper_posities)]
-else:
-    filtered_df = filtered_df  # Voor 'Alle posities', gebruik de volledige dataset
 
 
 
